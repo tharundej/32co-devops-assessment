@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -20,7 +21,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/GitHubActionsRole
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
       - name: Login to Amazon ECR
@@ -36,7 +38,7 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f app/Dockerfile app/
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Update Terraform and deploy
+      - name: Deploy with Terraform
         run: |
           cd infrastructure
           terraform init -backend-config="bucket=YOUR_TERRAFORM_STATE_BUCKET" \
@@ -45,4 +47,6 @@ jobs:
           terraform apply -var="image_tag=${{ github.sha }}" -auto-approve
 
       - name: Refresh Auto Scaling Group
-        run: aws autoscaling start-instance-refresh --auto-scaling-group-name devops-assessment-asg
+        run: |
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name devops-assessment-asg
