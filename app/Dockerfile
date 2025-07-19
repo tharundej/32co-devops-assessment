@@ -1,7 +1,7 @@
 FROM node:16
 WORKDIR /app
 RUN npm init -y
-RUN RUN npm install express @aws-sdk/client-secrets-manager pg
+RUN npm install express @aws-sdk/client-secrets-manager pg
 COPY package*.json ./
 COPY . .
 EXPOSE 3000
