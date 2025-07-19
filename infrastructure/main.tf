@@ -66,8 +66,8 @@ resource "aws_security_group" "alb" {
 resource "aws_security_group" "ec2" {
   vpc_id = aws_vpc.main.id
   ingress {
-    from_port       = 5000
-    to_port         = 5000
+    from_port       = 3000
+    to_port         = 3000
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }
@@ -97,7 +97,7 @@ resource "aws_db_instance" "main" {
   engine                 = "postgres"
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
-  username               = "admin"
+  username               = "dbadmin"
   password               = random_password.db_password.result
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]
@@ -173,16 +173,24 @@ resource "aws_launch_template" "app" {
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "app" {
-  desired_capacity    = 2
-  min_size            = 1
-  max_size            = 4
-  vpc_zone_identifier = aws_subnet.private[*].id
+  desired_capacity     = 2
+  min_size             = 1
+  max_size             = 4
+  vpc_zone_identifier  = aws_subnet.private[*].id
+
+
   launch_template {
     id      = aws_launch_template.app.id
     version = "$Latest"
   }
+
   target_group_arns = [aws_lb_target_group.app.arn]
-  tags = [{ key = "Name", value = "${var.app_name}-asg", propagate_at_launch = true }]
+
+  tag {
+    key                 = "Name"
+    value               = "${var.app_name}-asg"
+    propagate_at_launch = true
+  }
 }
 
 # Application Load Balancer
@@ -207,7 +215,7 @@ resource "aws_lb_listener" "http" {
 
 resource "aws_lb_target_group" "app" {
   name     = "${var.app_name}-tg"
-  port     = 5000
+  port     = 3000
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
   health_check { path = "/health" }
