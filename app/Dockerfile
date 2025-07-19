@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:18-slim
 WORKDIR /app
 RUN npm init -y
 RUN npm install express @aws-sdk/client-secrets-manager pg
