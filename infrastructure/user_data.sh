@@ -9,7 +9,7 @@ aws ecr get-login-password --region ${aws_region} | docker login --username AWS 
 
 # Pull and run the Docker image
 docker pull ${ecr_repo_url}:${image_tag}
-docker run -d -p 5000:5000 \
+docker run -d -p 3000:3000 \
   -e AWS_REGION=${aws_region} \
   -e SECRET_ARN=${secret_arn} \
   -e RDS_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${app_name}-db --query 'DBInstances[0].Endpoint.Address' --output text) \
