@@ -25,9 +25,11 @@ RDS_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${app_name
 docker run -d -p 3000:3000 \
   -e AWS_REGION=${aws_region} \
   -e SECRET_ARN=${secret_arn} \
-  -e RDS_ENDPOINT=${RDS_ENDPOINT} \
+  -e RDS_ENDPOINT=$RDS_ENDPOINT \
   --log-driver=awslogs \
   --log-opt awslogs-region=${aws_region} \
   --log-opt awslogs-group=/ecs/${app_name} \
   --log-opt awslogs-create-group=true \
   ${ecr_repo_url}:${image_tag}
+
+
