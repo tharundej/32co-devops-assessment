@@ -16,8 +16,8 @@ This repository contains a secure and scalable infrastructure for a Python Flask
    - Note the ALB DNS name from outputs.
 
 3. **Application**:
-   - The Flask app is in `app/`.
-   - Build and test locally: `docker build -t devops-assessment .` and `pytest tests/`.
+   - The Node.js app is in `app/`.
+   - Build and test locally: `docker build -t devops-assessment .` and `npm tests/`.
 
 4. **CI/CD**:
    - Update `ci-cd.yml` with your AWS account ID and Terraform state bucket.
@@ -31,8 +31,7 @@ This repository contains a secure and scalable infrastructure for a Python Flask
 - The application is a simple Node.js Express app requiring a database connection and an API key.
 - Public internet access is allowed for the ALB but restricted for EC2 and RDS.
 - PostgreSQL is chosen as the data store for its robustness and familiarity.
-- HTTPS is implemented using AWS ACM for security.
-
+  
 ## Known Limitations
 - Autoscaling is basic and may need tuning for production workloads.
 - No CDN is implemented due to time constraints, but it can be added with CloudFront.
