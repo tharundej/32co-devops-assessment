@@ -69,3 +69,9 @@ variable "low_cpu_threshold" {
   type        = number
   default     = 20
 }
+
+variable "environment" {
+  description = "Deployment environment like dev, stage, or prod"
+  type        = string
+  default     = "dev"
+}
