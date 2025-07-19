@@ -88,8 +88,14 @@ resource "aws_autoscaling_group" "app" {
   target_group_arns = [var.target_group_arn]
 
   tag {
-  key                 = "Name"
-  value               = "${var.app_name}-asg"
-  propagate_at_launch = true
-}
+    key                 = "Name"
+    value               = "${var.app_name}-instance"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Environment"
+    value               = var.environment
+    propagate_at_launch = true
+  }
 }
