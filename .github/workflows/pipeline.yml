@@ -46,7 +46,7 @@ jobs:
       - name: Deploy with Terraform
         run: |
           cd infrastructure
-          terraform init -backend-config="bucket=YOUR_TERRAFORM_STATE_BUCKET" \
+          terraform init -backend-config="bucket=tfstate-32co-20250719" \
                          -backend-config="key=terraform.tfstate" \
                          -backend-config="region=us-west-2"
           terraform apply -var="image_tag=${{ github.sha }}" -auto-approve
