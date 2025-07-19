@@ -1,0 +1,6 @@
+# Ignore Terraform state and cache
+.terraform/
+*.tfstate
+*.tfstate.backup
+# Any file or folder with "aws" in the name
+*aws*
