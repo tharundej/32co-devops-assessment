@@ -54,4 +54,4 @@ jobs:
       - name: Refresh Auto Scaling Group
         run: |
           aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name devops-assessment-asg
+            --auto-scaling-group-name terraform-20250719114526003300000005
