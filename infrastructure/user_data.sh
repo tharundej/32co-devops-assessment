@@ -38,16 +38,16 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-docker run -d -p 3000:3000 \
-  -e AWS_REGION=us-west-2 \
-  -e API_KEY="$API_KEY" \
-  -e DB_PASSWORD="$DB_PASSWORD" \
-  -e RDS_ENDPOINT="$RDS_ENDPOINT" \
+docker run -d --network host -p 3000:3000 \
+  -e AWS_REGION=$AWS_REGION \
+  -e SECRET_ARN=${secret_arn} \
+  -e RDS_ENDPOINT=$RDS_ENDPOINT \
   --log-driver=awslogs \
-  --log-opt awslogs-region=us-west-2 \
+  --log-opt awslogs-region=$AWS_REGION \
   --log-opt awslogs-group=/ecs/${app_name} \
-  --log-opt awslogs-stream=$(curl -s http://169.254.169.254/latest/meta-data/instance-id) \
+  --log-opt awslogs-stream=$INSTANCE_ID \
   ${ecr_repo_url}:${image_tag}
+
 
 if [ $? -ne 0 ]; then
   echo "Error: Failed to run Docker container" >> /var/log/userdata.log
