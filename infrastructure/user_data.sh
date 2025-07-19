@@ -1,41 +1,19 @@
 #!/bin/bash
-
-# Exit immediately if a command exits with a non-zero status
-set -e
-
-# Update and install Docker
 yum update -y
 yum install -y docker
-systemctl enable docker
-systemctl start docker
-usermod -aG docker ec2-user
+service docker start
+usermod -a -G docker ec2-user
 
-# Variables (ensure these are exported or passed into the script beforehand)
-AWS_REGION="${aws_region}"
-ECR_REPO_URL="${ecr_repo_url}"
-IMAGE_TAG="${image_tag}"
-SECRET_ARN="${secret_arn}"
-APP_NAME="${app_name}"
+# Authenticate to ECR
+aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${ecr_repo_url}
 
-# Authenticate Docker with ECR
-aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REPO_URL"
-
-# Pull Docker image
-docker pull "$ECR_REPO_URL:$IMAGE_TAG"
-
-# Fetch RDS endpoint
-RDS_ENDPOINT=$(aws rds describe-db-instances \
-  --db-instance-identifier "${APP_NAME}-db" \
-  --query 'DBInstances[0].Endpoint.Address' \
-  --output text \
-  --region "$AWS_REGION")
-
-# Run container
-docker run -d -p 3000:3000 \
-  -e AWS_REGION="$AWS_REGION" \
-  -e SECRET_ARN="$SECRET_ARN" \
-  -e RDS_ENDPOINT="$RDS_ENDPOINT" \
+# Pull and run the Docker image
+docker pull ${ecr_repo_url}:${image_tag}
+docker run -d -p 5000:5000 \
+  -e AWS_REGION=${aws_region} \
+  -e SECRET_ARN=${secret_arn} \
+  -e RDS_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${app_name}-db --query 'DBInstances[0].Endpoint.Address' --output text) \
   --log-driver=awslogs \
-  --log-opt awslogs-region="$AWS_REGION" \
-  --log-opt awslogs-group="/ecs/${APP_NAME}" \
-  "$ECR_REPO_URL:$IMAGE_TAG"
+  --log-opt awslogs-region=${aws_region} \
+  --log-opt awslogs-group=/ecs/${app_name} \
+  ${ecr_repo_url}:${image_tag}
