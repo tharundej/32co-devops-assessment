@@ -51,6 +51,7 @@ module "secrets" {
 data "aws_caller_identity" "current" {}
 module "ec2" {
   source            = "./modules/ec2"
+  environment       = var.environment
   aws_account_id = data.aws_caller_identity.current.account_id
   app_name          = var.app_name
   ami_id            = data.aws_ami.amazon_linux.id
