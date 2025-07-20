@@ -8,6 +8,7 @@ yum install -y docker aws-cli
 service docker start
 chkconfig docker on
 usermod -a -G docker ec2-user
+sleep 10
 
 # Authenticate to ECR
 aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${ecr_repo_url}
@@ -21,11 +22,24 @@ RDS_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${app_name
   exit 1
 }
 
-# Run Node.js app
+# # Run Node.js app
+# docker run -d -p 3000:3000 \
+#   -e AWS_REGION=${aws_region} \
+#   -e SECRET_ARN=${secret_arn} \
+#   -e RDS_ENDPOINT=$RDS_ENDPOINT \
+#   --log-driver=awslogs \
+#   --log-opt awslogs-region=${aws_region} \
+#   --log-opt awslogs-group=/ecs/${app_name} \
+#   --log-opt awslogs-create-group=true \
+#   ${ecr_repo_url}:${image_tag}
+
 docker run -d -p 3000:3000 \
   -e AWS_REGION=${aws_region} \
-  -e SECRET_ARN=${secret_arn} \
-  -e RDS_ENDPOINT=$RDS_ENDPOINT \
+  -e DB_HOST=$RDS_ENDPOINT \
+  -e DB_USER=$DB_USERNAME \
+  -e DB_PASSWORD=$DB_PASSWORD \
+  -e DB_NAME=$DB_NAME \
+  -e API_KEY=$API_KEY \
   --log-driver=awslogs \
   --log-opt awslogs-region=${aws_region} \
   --log-opt awslogs-group=/ecs/${app_name} \
