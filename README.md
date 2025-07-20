@@ -81,9 +81,6 @@ This repository contains the implementation for the Senior DevOps Home Assessmen
 - The ALB can be configured for HTTPS using AWS Certificate Manager (ACM), though a domain is required (not     implemented here but noted in the README).
 
 
-# Project Name
-[Brief project description, if needed]
-
 ## Reflection
 ### Decisions Made Beyond Requirements
 
