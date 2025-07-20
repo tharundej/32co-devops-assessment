@@ -1,3 +1,4 @@
+![alt text](32co.drawio-1.png)
 # Senior DevOps Home Assessment
 
 ## Overview
