@@ -1,8 +1,23 @@
 ![alt text](32co.drawio-1.png)
 # Senior DevOps Home Assessment
 
+This repository contains the implementation for the Senior DevOps Home Assessment, deploying a simple Node.js web application on AWS using Infrastructure as Code, CI/CD, secrets management, and monitoring.
+
 ## Overview
-This repository contains a secure and scalable infrastructure for a Python Flask web application, deployed on AWS using Terraform, GitHub Actions, and DevOps best practices.
+- **Application**: A simple Node.js Express application
+- **Infrastructure**: AWS (VPC, EC2, RDS PostgreSQL, S3, ALB)
+- **IaC**: Terraform
+- **CI/CD**: GitHub Actions
+- **Secrets Management**: AWS Secrets Manager
+- **Monitoring**: AWS CloudWatch
+- **Bonus Features**: HTTPS with ACM, basic autoscaling
+
+## Tools Used
+- Terraform: Infrastructure provisioning
+- GitHub Actions: CI/CD pipeline
+- AWS: Cloud provider (VPC, EC2, RDS, S3, ALB, Secrets Manager, CloudWatch, ACM)
+- Node.js: Application runtime
+- Docker: Containerization for consistent deployment
 
 ## Setup Instructions
 1. **Prerequisites**:
@@ -17,8 +32,8 @@ This repository contains a secure and scalable infrastructure for a Python Flask
    - Note the ALB DNS name from outputs.
 
 3. **Application**:
-   - The Node.js app is in `app/`.
-   - Build and test locally: `docker build -t devops-assessment .` and `npm tests/`.
+   - The Flask app is in `app/`.
+   - Build and test locally: `docker build -t devops-assessment .` and `pytest tests/`.
 
 4. **CI/CD**:
    - Update `ci-cd.yml` with your AWS account ID and Terraform state bucket.
