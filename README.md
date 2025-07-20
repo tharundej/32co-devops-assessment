@@ -39,7 +39,7 @@ This repository contains the implementation for the Senior DevOps Home Assessmen
    - Update `ci-cd.yml` with your AWS account ID and Terraform state bucket.
    - Push to the `main` branch to trigger the pipeline.
 
-5. **Access**:
+ ### Access
    - Visit the ALB DNS name (e.g., `http://<alb-dns-name>`) to access the app.
 
 
