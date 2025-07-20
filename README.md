@@ -62,8 +62,9 @@ This repository contains the implementation for the Senior DevOps Home Assessmen
 - The application retrieves secrets at runtime using the AWS SDK.
 
 ### Monitoring
-- CloudWatch dashboards are set up to monitor ALB request count, EC2 CPU utilization, and RDS metrics.
-- An alert is configured for HTTP 5xx errors on the ALB.
+- CloudWatch Dashboards: Cover ALB request count, EC2 CPU utilization, and RDS metrics, complementing the 5xx alert and CPU alarms.
+- HTTP 5xx Alert: Matches the alb_5xx resource, now confirmed as configured.
+- CPU-Based Autoscaling: Matches the high_cpu and low_cpu alarms and policies.
 
 ### Application Access
 - Access the application via the ALB DNS name output by Terraform (HTTP only).
