@@ -130,3 +130,8 @@ This repository contains the implementation for the Senior DevOps Home Assessmen
    - **Rollback Complexity**: While rolling updates are generally simple for forward progression, a true "rollback" to a previous state might still involve another rolling update to the older version, which might not be as immediate or seamless as a blue-green swap.  
    **Alternative Considered**: Blue-Green Deployments.  
    **Reason for Rejection (Alternative)**: Blue-green deployments, while offering zero-downtime and easy rollback, require maintaining two identical production environments (blue and green), which significantly increases infrastructure complexity and cost for this project's scope. The simplicity of rolling updates was prioritized.
+![
+   Alerts screenshots
+](alarm2.png) ![
+   Alerts screenshots
+](alarm.png)
