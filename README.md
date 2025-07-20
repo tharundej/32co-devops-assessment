@@ -1,4 +1,4 @@
-![alt text](32co.drawio-1.png)
+![alt text](32co.drawio.png)
 # Senior DevOps Home Assessment
 
 This repository contains the implementation for the Senior DevOps Home Assessment, deploying a simple Node.js web application on AWS using Infrastructure as Code, CI/CD, secrets management, and monitoring.
