@@ -36,7 +36,8 @@ This repository contains the implementation for the Senior DevOps Home Assessmen
    ```
 2. Navigate to the `infrastructure` directory:
    ```bash
-   cd infrastructure
+   cd infrastructure 
+   rm backend.tf
    ```
 3. Initialize Terraform:
    ```bash
