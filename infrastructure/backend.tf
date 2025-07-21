@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
-    bucket = "tfstate-32co-20250719"  # Replace with your actual unique name
+    bucket = "terraform-bucket-test32"  # Replace with your actual unique name
     key    = "terraform.tfstate"
-    region = "us-west-2"
+    region = "us-east-1"
   }
 }
