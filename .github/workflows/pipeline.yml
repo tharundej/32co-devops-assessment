@@ -47,7 +47,7 @@ jobs:
         run: |
           cd infrastructure
           
-          terraform-bin init -backend-config="terraform-bucket-test32" \
+          terraform-bin init -backend-config="bucket=terraform-bucket-test32" \
                          -backend-config="key=terraform.tfstate" \
                          -backend-config="region=us-east-1"
           terraform apply -var="image_tag=${{ github.sha }}" -auto-approve
