@@ -33,7 +33,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: devops-assessment
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f app/Dockerfile app/
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -41,16 +41,15 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7  # or whichever version you prefer
+          terraform_version: 1.5.7
 
       - name: Deploy with Terraform
         run: |
           cd infrastructure
-          
           terraform init -backend-config="bucket=terraform-bucket-test32" \
                          -backend-config="key=terraform.tfstate" \
                          -backend-config="region=us-east-1"
-          terraform apply -var="image_tag=${{ github.sha }}" -auto-approve
+          terraform apply -var="image_tag=latest" -auto-approve
 
       - name: Refresh Auto Scaling Group
         run: |
