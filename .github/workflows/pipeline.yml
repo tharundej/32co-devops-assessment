@@ -46,6 +46,7 @@ jobs:
       - name: Deploy with Terraform
         run: |
           cd infrastructure
+          terraform init
           terraform init -backend-config="terraform-bucket-test32" \
                          -backend-config="key=terraform.tfstate" \
                          -backend-config="region=us-east-1"
