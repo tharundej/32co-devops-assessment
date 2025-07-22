@@ -62,6 +62,7 @@ module "ec2" {
   ecr_repo_url      = module.ecr.repository_url
   image_tag         = var.image_tag
   secret_arn        = module.secrets.secret_arn
+  rds_endpoint      = module.rds.rds_endpoint 
   aws_region        = var.aws_region
   asg_min_size      = var.asg_min_size
   asg_max_size      = var.asg_max_size
