@@ -8,7 +8,7 @@ const port = 3000;
 const secretsClient = new SecretsManagerClient({ region: process.env.AWS_REGION });
 
 async function getSecrets() {
-  const command = new GetSecretValueCommand({ SecretId: process.env.SECRETS_ARN });
+  const command = new GetSecretValueCommand({ SecretId: process.env.secret_arn || process.env.SECRETS_ARN });
   const data = await secretsClient.send(command);
   return JSON.parse(data.SecretString);
 }
