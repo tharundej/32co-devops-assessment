@@ -65,7 +65,7 @@ resource "aws_launch_template" "app" {
     secret_arn   = var.secret_arn,
     aws_region   = var.aws_region,
     app_name     = var.app_name,
-    rds_endpoint = aws_db_instance.main.endpoint
+    rds_endpoint = var.rds_endpoint
   }))
   iam_instance_profile {
     name = aws_iam_instance_profile.ec2.name
