@@ -14,23 +14,27 @@ resource "aws_iam_role" "ec2" {
 # IAM Role Policy for EC2
 resource "aws_iam_role_policy" "ec2" {
   role = aws_iam_role.ec2.id
-
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
         Effect = "Allow",
-        Action = ["ecr:GetAuthorizationToken"],
-        Resource = "*"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer"
+        ],
+        Resource = [
+          "*",
+          "arn:aws:ecr:${var.aws_region}:${var.aws_account_id}:repository/${var.app_name}"
+        ]
       },
       {
         Effect = "Allow",
-        Action = ["ecr:BatchGetImage", "ecr:GetDownloadUrlForLayer"],
-        Resource = "arn:aws:ecr:${var.aws_region}:${var.aws_account_id}:repository/${var.app_name}"
-      },
-      {
-        Effect = "Allow",
-        Action = ["secretsmanager:GetSecretValue"],
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ],
         Resource = var.secret_arn
       },
       {
@@ -42,11 +46,38 @@ resource "aws_iam_role_policy" "ec2" {
         Effect = "Allow",
         Action = ["rds:DescribeDBInstances"],
         Resource = "*"
+      },
+      # Added for SSM Session Manager
+      {
+        Effect = "Allow",
+        Action = [
+          "ssm:UpdateInstanceInformation",
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams"
+        ],
+        Resource = "*"
       }
     ]
   })
 }
 
+# Attach AmazonSSMManagedInstanceCore policy for SSM
+resource "aws_iam_role_policy_attachment" "ssm_managed" {
+  role       = aws_iam_role.ec2.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
 
 # IAM Instance Profile
 resource "aws_iam_instance_profile" "ec2" {
@@ -71,6 +102,15 @@ resource "aws_launch_template" "app" {
     name = aws_iam_instance_profile.ec2.name
   }
   vpc_security_group_ids = [var.ec2_sg_id]
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name        = "${var.app_name}-instance"
+      Environment = var.environment
+      # Added for SSM identification
+      SSM         = "managed"
+    }
+  }
   tags = {
     Name = "${var.app_name}-lt"
   }
@@ -87,16 +127,20 @@ resource "aws_autoscaling_group" "app" {
     version = "$Latest"
   }
   target_group_arns = [var.target_group_arn]
-
   tag {
     key                 = "Name"
     value               = "${var.app_name}-instance"
     propagate_at_launch = true
   }
-
   tag {
     key                 = "Environment"
     value               = var.environment
+    propagate_at_launch = true
+  }
+  # Added for SSM identification
+  tag {
+    key                 = "SSM"
+    value               = "managed"
     propagate_at_launch = true
   }
 }
