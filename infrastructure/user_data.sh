@@ -35,6 +35,7 @@ RDS_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${app_name
 
 docker run -d -p 3000:3000 \
   -e AWS_REGION=${aws_region} \
+  -e SECRET_ARN=${secret_arn} \
   -e DB_HOST=$RDS_ENDPOINT \
   -e DB_USER=$DB_USERNAME \
   -e DB_PASSWORD=$DB_PASSWORD \
