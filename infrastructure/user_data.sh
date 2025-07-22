@@ -3,6 +3,9 @@ set -xe
 
 # Update and install docker & aws-cli
 yum update -y
+yum install -y amazon-ssm-agent
+systemctl enable amazon-ssm-agent
+systemctl start amazon-ssm-agent
 yum install -y docker aws-cli
 systemctl start docker
 systemctl enable docker
