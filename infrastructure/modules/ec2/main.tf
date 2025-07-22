@@ -62,9 +62,10 @@ resource "aws_launch_template" "app" {
   user_data              = base64encode(templatefile("${path.module}/../../user_data.sh", {
     ecr_repo_url = var.ecr_repo_url,
     image_tag    = var.image_tag,
-    secret_arn   = var.secret_arn,
+    secrets_arn   = var.secret_arn,
     aws_region   = var.aws_region,
-    app_name     = var.app_name
+    app_name     = var.app_name,
+    rds_endpoint = aws_db_instance.main.endpoint
   }))
   iam_instance_profile {
     name = aws_iam_instance_profile.ec2.name
