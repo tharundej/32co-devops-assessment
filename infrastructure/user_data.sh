@@ -1,46 +1,34 @@
-
 #!/bin/bash
-set -e  # Exit on error
+set -xe
 
-# Install and configure Docker
+# Update and install docker & aws-cli
 yum update -y
 yum install -y docker aws-cli
-service docker start
-chkconfig docker on
-usermod -a -G docker ec2-user
-sleep 10
+systemctl start docker
+systemctl enable docker
 
-# Authenticate to ECR
+# Add ec2-user to docker group (may require user login to take effect)
+usermod -aG docker ec2-user
+
+# Wait for docker daemon ready
+until systemctl is-active docker; do
+  echo "Waiting for docker daemon..."
+  sleep 10
+done
+
+# Login to ECR with retries
 aws ecr get-login-password --region ${aws_region} | docker login --username AWS --password-stdin ${ecr_repo_url}
 
-# Pull Docker image
+# Pull image
 docker pull ${ecr_repo_url}:${image_tag}
 
-# Get RDS endpoint with error handling
-RDS_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${app_name}-db --region ${aws_region} --query 'DBInstances[0].Endpoint.Address' --output text 2>/dev/null) || {
-  echo "Failed to get RDS endpoint" >&2
-  exit 1
-}
+# Wait for network connectivity and RDS availability if needed
 
-# # Run Node.js app
-# docker run -d -p 3000:3000 \
-#   -e AWS_REGION=${aws_region} \
-#   -e SECRET_ARN=${secret_arn} \
-#   -e RDS_ENDPOINT=$RDS_ENDPOINT \
-#   --log-driver=awslogs \
-#   --log-opt awslogs-region=${aws_region} \
-#   --log-opt awslogs-group=/ecs/${app_name} \
-#   --log-opt awslogs-create-group=true \
-#   ${ecr_repo_url}:${image_tag}
-
+# Run container
 docker run -d -p 3000:3000 \
   -e AWS_REGION=${aws_region} \
   -e SECRETS_ARN=${secret_arn} \
-  -e RDS_ENDPOINT=$RDS_ENDPOINT \
-  # --log-driver=awslogs \
-  # --log-opt awslogs-region=${aws_region} \
-  # --log-opt awslogs-group=/ecs/${app_name} \
-  # --log-opt awslogs-create-group=true \
+  -e RDS_ENDPOINT=${rds_endpoint} \
   ${ecr_repo_url}:${image_tag}
 
-
+# Optional: redirect logs somewhere for debugging
