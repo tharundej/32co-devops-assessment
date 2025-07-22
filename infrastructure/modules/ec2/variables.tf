@@ -1,3 +1,8 @@
+variable "rds_endpoint" {
+  description = "RDS endpoint to connect to the database"
+  type        = string
+}
+
 variable "app_name" {
   description = "Application name prefix"
   type        = string
