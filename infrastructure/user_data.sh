@@ -6,6 +6,12 @@ yum update -y
 yum install -y amazon-ssm-agent
 systemctl enable amazon-ssm-agent
 systemctl start amazon-ssm-agent
+
+until systemctl is-active amazon-ssm-agent; do
+  echo "Waiting for SSM Agent to start..."
+  sleep 5
+done
+
 yum install -y docker aws-cli
 systemctl start docker
 systemctl enable docker
