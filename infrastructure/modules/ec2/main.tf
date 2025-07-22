@@ -62,7 +62,7 @@ resource "aws_launch_template" "app" {
   user_data              = base64encode(templatefile("${path.module}/../../user_data.sh", {
     ecr_repo_url = var.ecr_repo_url,
     image_tag    = var.image_tag,
-    secret_arn   = aws_secretsmanager_secret.app_secrets.arn,
+    secret_arn   = var.secret_arn,
     aws_region   = var.aws_region,
     app_name     = var.app_name
   }))
